@@ -1,0 +1,131 @@
+<!DOCTYPE html>  
+<html>
+<body style="background-color:rgba(0,0,0,0.9)">
+<title>NLP Web Test</title>
+<link rel="stylesheet" type="text/css" href="../static/css/mainpage.css" />
+<div class="head_style">
+<h1>自然语言处理测试系统</h1>
+</div>
+<div class="text_style"> 
+<form action="/process_data/" method="get">
+    测试样例输入: <input type="text" id="seq" name="seq" style="width:800px;height:15px"><br>
+    任务使能<br>
+    输入:ner,nmt,scene,执行相应的任务;
+    输入为空，执行所有任务:
+    <input type="text" id="task" name="task" style="width:40px;height:15px"> <br>  
+    <button type="button" id='process'>
+    <div class="botton_style">提交</div>
+    </button> 
+    <p>
+        <b>NLP服务器返回结果:</b>
+        <div class="data_return"><span id='result'>Data from Server</span></div>
+    </p> 
+</form>
+<br>
+<form action="/insert_db/" method="get" novalidate>
+    <div>{{ data }}</div>
+    请输入要存入数据库的类型F或者T: <input type="text" id="flag_insert" name="flag" style="width:20px">
+    点击按钮存入数据库: <button type="button" id='save_db'>
+    <div class="botton_style">存储</div>
+    </button> 
+</form>
+
+<form action="/lookup_db/" method="get" novalidate>
+    请输入需要查询的数据类型T或者F: <input type="text" id="flag_check" name="flag" style="width:20px">
+    查看返回结果，请点击按钮:<button type="button" id='show_db'>
+    <div class="botton_style">查询</div>
+    </button> 
+    <p>
+        服务器数据库返回值:
+        <div class="data_return"><span id='db_result'>DataBase back</span></div>
+    </p>  
+</form>
+<form action="/delete_db/" method="get" novalidate>
+    {% csrf_token %}
+    请输入需要删除的数据类型T或者F: <input type="text" id="flag_delete" name="flag" style="width:20px">
+    请点击按钮确认删除:<button type="button" id='del_db'>
+    <div class="botton_style_1">删除</div>
+    </button> 
+</form>
+
+<p>
+    <div id="chat_area" name="chat_area" class="text_style" style="width:80%; height:300px; overflow:auto;">聊天内容:</br></div>
+</p>
+
+<form id="chat_form" method="get" novalidate>
+    <input type="text" id="chat_input" style="width:80%; height:30px;" />
+    <button type="button" id="chat_submit" /><div class="botton_style">提交</div>
+</form>
+
+<script src="../static/js/jquery.min.js" ></script>
+<script>  
+    jQuery(document).ready(
+        function()
+        {  
+            $("#process").click(function()
+            {  
+                var a = $("#seq").val();
+                var b = $("#task").val();
+                $.get("/process_data/",{'seq':a,'task':b},function(ret)
+                {
+                    $('#result').html(ret)
+                })
+            });
+            $("#chat_submit").click(function()
+            {
+                var a = $("#chat_input").val();
+                $("#chat_area").html($("#chat_area").html() + "user:" + a + "</br>");
+                $("#chat_area")[0].scrollTop = $("#chat_area")[0].scrollHeight;
+                $.get("/process_chat/",{'sentence':a},function(ret)
+                {
+                    $("#chat_area").html($("#chat_area").html() + "robot:" + ret + "</br>");
+                    $("#chat_area")[0].scrollTop = $("#chat_area")[0].scrollHeight;
+                });
+                $("#chat_input")[0].value = "";
+            });
+            $("#chat_form").keydown(function(event)
+            {
+                if(event.keyCode == 13) {
+                    // does not work
+                    // $("#chat_submit").trigger("click");
+                    var a = $("#chat_input").val();
+                    $("#chat_area").html($("#chat_area").html() + "user:" + a + "</br>");
+                    $("#chat_area")[0].scrollTop = $("#chat_area")[0].scrollHeight;
+                    $.get("/process_chat/",{'sentence':a},function(ret)
+                    {
+                        $("#chat_area").html($("#chat_area").html() + "robot:" + ret + "</br>");
+                        $("#chat_area")[0].scrollTop = $("#chat_area")[0].scrollHeight;
+                    });
+                    $("#chat_input")[0].value = "";
+                    return false;
+                }
+                return true;
+            });
+            $("#show_db").click(function()
+            {  
+                var a = $("#flag_check").val();
+                $.get("/lookup_db/",{'flag':a},function(ret)
+                {
+                    $('#db_result').html(ret)
+                })
+            });
+            $("#del_db").click(function()
+            {  
+                var a = $("#flag_delete").val();
+                $.get("/delete_db/",{'flag':a},function(ret)
+                {
+                })
+            });
+            $("#save_db").click(function()
+            {
+                var a = $("#flag_insert").val();
+                $.get("/insert_db/",{'flag':a},function(ret)
+                {
+                    $('#p_db_result').html(ret)
+                })
+            });
+        });  
+</script>  
+</div>
+</body>  
+</html>  

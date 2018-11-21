@@ -1,0 +1,27 @@
+.head_style{
+	color: green;
+	font-family: consolas,Arial,Verdana,Sans-serif;
+	font-weight: bold;
+	text-align: center;
+}
+.text_style{
+	color: green;
+	font-family: consolas,Arial,Verdana,Sans-serif;
+	font-weight: bold;
+}
+.botton_style{
+	color: red;
+	font-family: consolas,Arial,Verdana,Sans-serif;
+	font-weight: bold;
+}
+.botton_style_1{
+	color: red;
+	font-family: consolas,Arial,Verdana,Sans-serif;
+}
+.data_return{
+	border: double rgb(0,255,255);
+	border-width: 5px;
+	color: yellow;
+	font-family: consolas,Arial,Verdana,Sans-serif;
+	font-weight: bold;
+}
